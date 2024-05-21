@@ -54,6 +54,8 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     AActor* ReferenceActor = nullptr;
     FOnNewReferenceActorDetected OnNewReferenceActorDetected;
+    FTransform pastRelativeTransf;
+    float pastTime;
 
     UFUNCTION(BlueprintCallable)
     virtual void SetReferenceActorByName(const FString& InName);
