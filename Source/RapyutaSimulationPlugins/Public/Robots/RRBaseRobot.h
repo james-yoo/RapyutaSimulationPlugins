@@ -561,10 +561,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TObjectPtr<URRUIWidgetComponent> UIWidgetComp = nullptr;
 
-    //! Widget class
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
-    TSubclassOf<UUserWidget> UIUserWidgetClass;
-
     //! Relative pose of the UI widget from the owner robot
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FTransform UIWidgetOffset = FTransform(FVector(0.f, 0.f, 100.f));

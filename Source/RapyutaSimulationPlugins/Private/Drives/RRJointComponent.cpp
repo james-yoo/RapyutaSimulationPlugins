@@ -316,112 +316,114 @@ bool URRJointComponent::HasReachedPoseTarget(const float InPositionTolerance, co
             {
                 bMovingToTargetPose = false;
                 OnControlFailDelegate.ExecuteIfBound();
-            };
-
-            void URRJointComponent::SetPose(const FVector& InPosition, const FRotator& InOrientation)
-            {
-                Position = InPosition.BoundToBox(PositionMin, PositionMax);
-                Orientation = FRotator(
-                    bLimitPitch ? FMath::Clamp(InOrientation.Pitch, OrientationMin.Pitch, OrientationMax.Pitch)
-                                : InOrientation.Pitch,
-                    bLimitYaw ? FMath::Clamp(InOrientation.Yaw, OrientationMin.Yaw, OrientationMax.Yaw) : InOrientation.Yaw,
-                    bLimitRoll ? FMath::Clamp(InOrientation.Roll, OrientationMin.Roll, OrientationMax.Roll) : InOrientation.Roll);
-            };
-
-            void URRJointComponent::PoseFromArray(const TArray<float>& InPose, FVector& OutPosition, FRotator& OutOrientation)
-            {
-                if (InPose.Num() != LinearDOF + RotationalDOF)
-                {
-                    UE_LOG_WITH_INFO(
-                        LogRapyutaCore,
-                        Warning,
-                        TEXT("Given joint pose values num (%u) does not match joint total DOF (Linear DOF %i & Rotational DOF %i)"),
-                        InPose.Num(),
-                        LinearDOF,
-                        RotationalDOF);
-                    return;
-                }
-
-                uint8 i;
-                FVector LinearInput = FVector(0, 0, 0);
-                for (i = 0; i < LinearDOF; i++)
-                {
-                    LinearInput[i] = InPose[i];
-                }
-
-                FVector RotationalInput = FVector(0, 0, 0);
-                for (i = 0; i < RotationalDOF; i++)
-                {
-                    RotationalInput[i] = InPose[LinearDOF + i];
-                }
-
-                OutPosition = LinearInput;
-                OutOrientation = FRotator::MakeFromEuler(RotationalInput);
-            };
-
-            void URRJointComponent::SetPoseTargetWithArray(const TArray<float>& InPose)
-            {
-                FVector OutPosition;
-                FRotator OutOrientation;
-                PoseFromArray(InPose, OutPosition, OutOrientation);
-                SetPoseTarget(OutPosition, OutOrientation);
             }
+        }
+    }
+    return res;
+};
 
-            void URRJointComponent::SetPoseTargetWithArrayWithDelegates(const TArray<float>& InPose,
-                                                                        const FJointCallback& InOnControlSuccessDelegate,
-                                                                        const FJointCallback& InOnControlFailDelegate,
-                                                                        const float InPositionTolerance,
-                                                                        const float InOrientationTolerance,
-                                                                        const float InTimeOut)
-            {
-                FVector OutPosition;
-                FRotator OutOrientation;
-                PoseFromArray(InPose, OutPosition, OutOrientation);
-                SetPoseTargetWithDelegates(OutPosition,
-                                           OutOrientation,
-                                           InOnControlSuccessDelegate,
-                                           InOnControlFailDelegate,
-                                           InPositionTolerance,
-                                           InOrientationTolerance,
-                                           InTimeOut);
-            }
+void URRJointComponent::SetPose(const FVector& InPosition, const FRotator& InOrientation)
+{
+    Position = InPosition.BoundToBox(PositionMin, PositionMax);
+    Orientation =
+        FRotator(bLimitPitch ? FMath::Clamp(InOrientation.Pitch, OrientationMin.Pitch, OrientationMax.Pitch) : InOrientation.Pitch,
+                 bLimitYaw ? FMath::Clamp(InOrientation.Yaw, OrientationMin.Yaw, OrientationMax.Yaw) : InOrientation.Yaw,
+                 bLimitRoll ? FMath::Clamp(InOrientation.Roll, OrientationMin.Roll, OrientationMax.Roll) : InOrientation.Roll);
+};
 
-            void URRJointComponent::SetPoseWithArray(const TArray<float>& InPose)
-            {
-                FVector OutPosition;
-                FRotator OutOrientation;
-                PoseFromArray(InPose, OutPosition, OutOrientation);
-                SetPose(OutPosition, OutOrientation);
-            }
+void URRJointComponent::PoseFromArray(const TArray<float>& InPose, FVector& OutPosition, FRotator& OutOrientation)
+{
+    if (InPose.Num() != LinearDOF + RotationalDOF)
+    {
+        UE_LOG_WITH_INFO(
+            LogRapyutaCore,
+            Warning,
+            TEXT("Given joint pose values num (%u) does not match joint total DOF (Linear DOF %i & Rotational DOF %i)"),
+            InPose.Num(),
+            LinearDOF,
+            RotationalDOF);
+        return;
+    }
 
-            void URRJointComponent::Teleport(const FVector& InPosition, const FRotator& InOrientation)
-            {
-            }
+    uint8 i;
+    FVector LinearInput = FVector(0, 0, 0);
+    for (i = 0; i < LinearDOF; i++)
+    {
+        LinearInput[i] = InPose[i];
+    }
 
-            void URRJointComponent::MoveToInitPose()
-            {
-            }
+    FVector RotationalInput = FVector(0, 0, 0);
+    for (i = 0; i < RotationalDOF; i++)
+    {
+        RotationalInput[i] = InPose[LinearDOF + i];
+    }
 
-            void URRJointComponent::UpdateState(const float DeltaTime)
-            {
-            }
+    OutPosition = LinearInput;
+    OutOrientation = FRotator::MakeFromEuler(RotationalInput);
+};
 
-            void URRJointComponent::UpdateControl(const float DeltaTime)
-            {
-            }
+void URRJointComponent::SetPoseTargetWithArray(const TArray<float>& InPose)
+{
+    FVector OutPosition;
+    FRotator OutOrientation;
+    PoseFromArray(InPose, OutPosition, OutOrientation);
+    SetPoseTarget(OutPosition, OutOrientation);
+}
 
-            // Called every frame
-            void URRJointComponent::TickComponent(
-                float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-            {
-                Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+void URRJointComponent::SetPoseTargetWithArrayWithDelegates(const TArray<float>& InPose,
+                                                            const FJointCallback& InOnControlSuccessDelegate,
+                                                            const FJointCallback& InOnControlFailDelegate,
+                                                            const float InPositionTolerance,
+                                                            const float InOrientationTolerance,
+                                                            const float InTimeOut)
+{
+    FVector OutPosition;
+    FRotator OutOrientation;
+    PoseFromArray(InPose, OutPosition, OutOrientation);
+    SetPoseTargetWithDelegates(OutPosition,
+                               OutOrientation,
+                               InOnControlSuccessDelegate,
+                               InOnControlFailDelegate,
+                               InPositionTolerance,
+                               InOrientationTolerance,
+                               InTimeOut);
+}
 
-                if (IsValid())
-                {
-                    UpdateState(DeltaTime);
-                    UpdateControl(DeltaTime);
+void URRJointComponent::SetPoseWithArray(const TArray<float>& InPose)
+{
+    FVector OutPosition;
+    FRotator OutOrientation;
+    PoseFromArray(InPose, OutPosition, OutOrientation);
+    SetPose(OutPosition, OutOrientation);
+}
 
-                    HasReachedVelocityTarget();
-                    HasReachedPoseTarget();
-                }
-            }
+void URRJointComponent::Teleport(const FVector& InPosition, const FRotator& InOrientation)
+{
+}
+
+void URRJointComponent::MoveToInitPose()
+{
+}
+
+void URRJointComponent::UpdateState(const float DeltaTime)
+{
+}
+
+void URRJointComponent::UpdateControl(const float DeltaTime)
+{
+}
+
+// Called every frame
+void URRJointComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+    if (IsValid())
+    {
+        UpdateState(DeltaTime);
+        UpdateControl(DeltaTime);
+
+        HasReachedVelocityTarget();
+        HasReachedPoseTarget();
+    }
+}
