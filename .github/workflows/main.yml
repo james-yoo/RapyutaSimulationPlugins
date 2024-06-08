@@ -25,6 +25,7 @@ jobs:
           - devel
           - UE5.2
           - UE5.3
+          - UE5.4
     steps:
     - name: Checkout
       uses: actions/checkout@v4
