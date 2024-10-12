@@ -14,6 +14,7 @@
 // RapyutaSimulationPlugins
 #include "Core/RRActorCommon.h"
 #include "Core/RRConversionUtils.h"
+#include "Core/RRGameMode.h"
 
 #include "RRGameState.generated.h"
 

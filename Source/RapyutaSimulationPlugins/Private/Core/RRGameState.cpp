@@ -18,6 +18,9 @@
 #include "Core/RRROS2GameMode.h"
 #include "Core/RRSceneDirector.h"
 #include "Core/RRUObjectUtils.h"
+#include "logUtilities.h"
+#include "Core/RRGameMode.h" 
+
 
 ARRGameState::ARRGameState()
 {

@@ -1,6 +1,9 @@
 // Copyright 2020-2023 Rapyuta Robotics Co., Ltd.
 #include "Core/RRMeshActor.h"
 
+// Native
+#include <type_traits>
+
 // RapyutaSimulationPlugins
 #include "Core/RRCoreUtils.h"
 #include "Core/RRGameMode.h"
@@ -10,8 +13,9 @@
 #include "Core/RRStaticMeshComponent.h"
 #include "Core/RRUObjectUtils.h"
 
-using URRMeshComponent =
-    typename TChooseClass<RAPYUTA_RUNTIME_MESH_ENTITY_USE_STATIC_MESH, URRStaticMeshComponent, URRProceduralMeshComponent>::Result;
+using URRMeshComponent = typename std::conditional<RAPYUTA_RUNTIME_MESH_ENTITY_USE_STATIC_MESH,
+    URRStaticMeshComponent,
+    URRProceduralMeshComponent>::type;
 
 ARRMeshActor::ARRMeshActor()
 {
@@ -170,28 +174,7 @@ void ARRMeshActor::OnBodyComponentMeshCreationDone(bool bInCreationResult, UObje
     bLastMeshCreationResult = (0 == CreatedMeshesNum) ? bInCreationResult : (bLastMeshCreationResult && bInCreationResult);
     if (ToBeCreatedMeshesNum == (++CreatedMeshesNum))
     {
-        // NOTE: Custom appearance may be setup in child class here-in
         DeclareFullCreation(bLastMeshCreationResult);
-
-#if WITH_EDITOR
-        // Gen whole body's thumbnail only after full creation
-        // NOTE: For now, only single-mesh actor is supported
-        if (CreatedMeshesNum == 1)
-        {
-            if (auto* baseStaticMeshComp = Cast<URRStaticMeshComponent>(BaseMeshComp);
-                baseStaticMeshComp && baseStaticMeshComp->bMeshRuntimeCreated)
-            {
-                URRCoreUtils::GenerateThumbnail(
-                    baseStaticMeshComp->GetStaticMesh(),
-                    ThumbnailTools::DefaultThumbnailSize,
-                    ThumbnailTools::DefaultThumbnailSize,
-                    FPackageName::LongPackageNameToFilename(
-                        RRGameSingleton->GetDynamicAssetsBasePath(RAPYUTA_SIMULATION_PLUGINS_MODULE_NAME) /
-                            RRGameSingleton->GetAssetsFolderName(ERRResourceDataType::UE_STATIC_MESH) / EntityModelName,
-                        URRCoreUtils::GetSimFileExt(ERRFileType::IMAGE_JPG)));
-            }
-        }
-#endif
     }
 }
 

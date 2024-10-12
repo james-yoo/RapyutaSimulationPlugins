@@ -4,7 +4,6 @@
 // UE
 #if WITH_EDITOR
 #include "ConvexDecompTool.h"
-#include "ObjectTools.h"
 #endif
 #include "Engine/StaticMesh.h"
 #include "Materials/MaterialInstanceDynamic.h"
@@ -332,8 +331,7 @@ UStaticMesh* URRStaticMeshComponent::CreateMeshBody(const FRRMeshData& InMeshDat
     // thus [visualMeshRenderData->IsInitialized()] may not instantly inited here like in fast build.
 
     // Add to the global resource store
-    auto* gameSingleton = URRGameSingleton::Get();
-    gameSingleton->AddDynamicResource<UStaticMesh>(ERRResourceDataType::UE_STATIC_MESH, visualMesh, MeshUniqueName);
+    URRGameSingleton::Get()->AddDynamicResource<UStaticMesh>(ERRResourceDataType::UE_STATIC_MESH, visualMesh, MeshUniqueName);
 
     // Auto-save [visualMesh] to uasset on disk, to be used directly in future Sim runs
 #if RAPYUTA_SIM_VERBOSE
@@ -344,7 +342,6 @@ UStaticMesh* URRStaticMeshComponent::CreateMeshBody(const FRRMeshData& InMeshDat
     {
         if (visualMesh->GetSourceModel(0).IsMeshDescriptionValid())
         {
-            bMeshRuntimeCreated = true;
             URRAssetUtils::SaveObjectToAssetInModule(
                 visualMesh, ERRResourceDataType::UE_STATIC_MESH, MeshUniqueName, RAPYUTA_SIMULATION_PLUGINS_MODULE_NAME);
         }

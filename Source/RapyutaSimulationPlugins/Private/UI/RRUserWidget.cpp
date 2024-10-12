@@ -1,5 +1,11 @@
 // Copyright 2020-2023 Rapyuta Robotics Co., Ltd.
 #include "UI/RRUserWidget.h"
+#include "logUtilities.h"
+#include "RapyutaSimulationPlugins.h"
+
+
+
+
 
 TSharedRef<SWidget> URRUserWidget::RebuildWidget()
 {

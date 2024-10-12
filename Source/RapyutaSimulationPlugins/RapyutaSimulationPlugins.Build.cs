@@ -40,14 +40,14 @@ public class RapyutaSimulationPlugins : ModuleRules
     public RapyutaSimulationPlugins(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-        CppStandard = CppStandardVersion.Cpp17;
+        CppStandard = CppStandardVersion.Latest;
         bEnableExceptions = true;
 
         // Runtime modules
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "RenderCore", "Renderer", "RHI", "PhysicsCore",
                                                             "ImageWrapper", "XmlParser", "Json", "PakFile", "IESFile",
                                                             "AIModule", "NavigationSystem", "TimeManagement", "UMG",
-                                                            "ChaosVehicles",
+                                                            "ChaosVehicles", "Slate", "SlateCore", 
                                                             "ProceduralMeshComponent", "MeshDescription", "StaticMeshDescription", "MeshConversion",
                                                             "rclUE"});
 
@@ -117,10 +117,6 @@ public class RapyutaSimulationPlugins : ModuleRules
         // two_point_interpolation
         string TwoPointsInterpolationPath = GetLibPath("two_points_interpolation_cpp");
         PublicIncludePaths.Add(TwoPointsInterpolationPath);
-
-        // filter
-        string FilterPath = GetLibPath("filter_cpp");
-        PublicIncludePaths.Add(FilterPath);
 
     }
 }

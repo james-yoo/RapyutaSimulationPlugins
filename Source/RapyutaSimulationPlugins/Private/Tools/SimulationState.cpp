@@ -103,10 +103,6 @@ void ASimulationState::ServerAddEntity(AActor* InEntity)
             EntitiesWithTag.Emplace(tag, MoveTemp(actors));
         }
     }
-
-#if WITH_EDITOR
-    EntitiesWithDisplayName.Emplace(UKismetSystemLibrary::GetDisplayName(InEntity), InEntity);
-#endif
 }
 
 // Work around to replicating Entities and EntitiesWithTag since TMaps cannot be replicated
@@ -229,23 +225,14 @@ void ASimulationState::ServerSetEntityState(const FROSSetEntityStateReq& InReque
 
     if (ServerCheckSetEntityStateRequest(InRequest))
     {
-        AActor* TargetActor = Entities.FindRef(InRequest.State.Name);
-        AActor* RefActor = Entities.FindRef(InRequest.State.ReferenceFrame);
-#if WITH_EDITOR
-        if (TargetActor == nullptr)
-        {
-            TargetActor = EntitiesWithDisplayName.FindRef(InRequest.State.Name);
-        }
-        if (RefActor == nullptr)
-        {
-            RefActor = EntitiesWithDisplayName.FindRef(InRequest.State.ReferenceFrame);
-        }
-#endif
         FTransform relativeTransf(InRequest.State.Pose.Orientation, InRequest.State.Pose.Position);
         relativeTransf = URRConversionUtils::TransformROSToUE(relativeTransf);
         FTransform worldTransf;
-        URRGeneralUtils::GetWorldTransform(RefActor, relativeTransf, worldTransf);
-        TargetActor->SetActorTransform(worldTransf);
+        URRGeneralUtils::GetWorldTransform(
+            Entities.Contains(InRequest.State.ReferenceFrame) ? Entities[InRequest.State.ReferenceFrame] : nullptr,
+            relativeTransf,
+            worldTransf);
+        Entities[InRequest.State.Name]->SetActorTransform(worldTransf);
     }
 
     PrevSetEntityStateRequest = InRequest;
@@ -270,18 +257,8 @@ void ASimulationState::ServerAttach(const FROSAttachReq& InRequest)
     // TODO: Add proper server check
     //if (ServerCheckAttachRequest(InRequest))
 
-    AActor* entity1 = Entities.FindRef(InRequest.Name1);
-    AActor* entity2 = Entities.FindRef(InRequest.Name2);
-#if WITH_EDITOR
-    if (entity1 == nullptr)
-    {
-        entity1 = EntitiesWithDisplayName.FindRef(InRequest.Name1);
-    }
-    if (entity2 == nullptr)
-    {
-        entity2 = EntitiesWithDisplayName.FindRef(InRequest.Name2);
-    }
-#endif
+    AActor* entity1 = Entities[InRequest.Name1];
+    AActor* entity2 = Entities[InRequest.Name2];
 
     if (entity2->IsRootComponentMovable())
     {
@@ -450,15 +427,7 @@ AActor* ASimulationState::ServerSpawnEntity(const FROSSpawnEntityReq& InRequest,
                 URRConversionUtils::TransformROSToUE(FTransform(InRequest.State.Pose.Orientation, InRequest.State.Pose.Position));
             const FString& referenceFrame = InRequest.State.ReferenceFrame;
             FTransform worldTransf;
-
-            AActor* RefActor = Entities.FindRef(referenceFrame);
-#if WITH_EDITOR
-            if (RefActor == nullptr)
-            {
-                RefActor = EntitiesWithDisplayName.FindRef(referenceFrame);
-            }
-#endif
-            URRGeneralUtils::GetWorldTransform(RefActor, relativeTransf, worldTransf);
+            URRGeneralUtils::GetWorldTransform(Entities.FindRef(referenceFrame), relativeTransf, worldTransf);
 
             // Spawn entity
             newEntity = ServerSpawnEntity(InRequest, SpawnableEntityTypes[entityModelName], worldTransf, InNetworkPlayerId);

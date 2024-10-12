@@ -5,6 +5,10 @@
 // RapyutaSimulationPlugins
 #include "Robots/RRBaseROS2Interface.h"
 #include "Robots/RRBaseRobot.h"
+#include "logUtilities.h"
+#include "Robots/RRRobotROS2Interface.h"
+
+
 
 void ARRBaseRobotROSController::OnPossess(APawn* InPawn)
 {
@@ -14,8 +18,7 @@ void ARRBaseRobotROSController::OnPossess(APawn* InPawn)
     if (robot)
     {
         robot->InitROS2Interface();
-        ROS2Interface = robot->ROS2Interface;
-    }
+        ROS2Interface = static_cast<URRBaseROS2Interface*>(robot->ROS2Interface.Get());    }
     else
     {
         URRBaseROS2InterfaceComponent* ROS2InterfaceComponent = InPawn->FindComponentByClass<URRBaseROS2InterfaceComponent>();

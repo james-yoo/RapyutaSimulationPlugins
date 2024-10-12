@@ -13,6 +13,7 @@
 
 // Native
 #include <mutex>
+#include <type_traits>
 
 // UE
 #include "Engine.h"
@@ -27,16 +28,36 @@
 
 #include "RRActorCommon.generated.h"
 
-#define RAPYUTA_SIM_VERBOSE (0)    // todo make this CVar
+#ifndef RAPYUTA_SIM_VERBOSE
+#define RAPYUTA_SIM_VERBOSE (0)  // TODO: Make this a configurable CVar.
+#endif
 
-//! NOTES: These 2 DEBUG directives are used mainly for ref code annnotation, thus must NEVER be turned on here globally!
-#define RAPYUTA_SIM_DEBUG (0)
-#define RAPYUTA_SIM_VISUAL_DEBUG (0)
+// NOTES: These 2 DEBUG directives are used mainly for reference code annotation, thus must NEVER be turned on globally!
+// Using #ifndef to ensure they are not redefined unintentionally.
+#ifndef RAPYUTA_SIM_DEBUG
+#define RAPYUTA_SIM_DEBUG (0)  // Set to 1 to enable debugging; use carefully.
+#endif
 
-#define RAPYUTA_USE_SCENE_DIRECTOR (0)
+#ifndef RAPYUTA_SIM_VISUAL_DEBUG
+#define RAPYUTA_SIM_VISUAL_DEBUG (0)  // Set to 1 to enable visual debugging.
+#endif
 
-#define RAPYUTA_RUNTIME_MESH_ENTITY_USE_STATIC_MESH (1)
-#define RAPYUTA_RUNTIME_MESH_ENTITY_USE_PROCEDURAL_MESH (!RAPYUTA_RUNTIME_MESH_ENTITY_USE_STATIC_MESH)
+// Scene Director usage flag.
+#ifndef RAPYUTA_USE_SCENE_DIRECTOR
+#define RAPYUTA_USE_SCENE_DIRECTOR (0)  // Set to 1 to use the Scene Director feature.
+#endif
+
+// Runtime Mesh Entity Usage Flags
+// Use either Static Mesh or Procedural Mesh, but not both.
+#ifndef RAPYUTA_RUNTIME_MESH_ENTITY_USE_STATIC_MESH
+#define RAPYUTA_RUNTIME_MESH_ENTITY_USE_STATIC_MESH (1)  // Set to 1 to use Static Mesh.
+#endif
+
+#ifndef RAPYUTA_RUNTIME_MESH_ENTITY_USE_PROCEDURAL_MESH
+#define RAPYUTA_RUNTIME_MESH_ENTITY_USE_PROCEDURAL_MESH (RAPYUTA_RUNTIME_MESH_ENTITY_USE_STATIC_MESH == 0)  // Use procedural mesh if static mesh is not used.
+#endif
+
+
 
 class ARRGameState;
 class ARRMeshActor;
@@ -317,9 +338,9 @@ struct RAPYUTASIMULATIONPLUGINS_API FRREntityLogInfo
 };
 
 template<int8 InBitDepth>
-using FRRColor = typename TChooseClass<(8 == InBitDepth),
-                                       FColor,
-                                       typename TChooseClass<(16 == InBitDepth), FFloat16Color, FLinearColor>::Result>::Result;
+using FRRColor = typename std::conditional<(8 == InBitDepth),
+        FColor,
+        typename std::conditional<(16 == InBitDepth), FFloat16Color, FLinearColor>::type>::type;
 
 // (NOTE) TImagePixelData could be used instead
 USTRUCT()

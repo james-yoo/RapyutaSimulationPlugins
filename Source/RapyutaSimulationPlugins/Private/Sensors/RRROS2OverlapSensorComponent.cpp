@@ -33,15 +33,7 @@ void URRROS2OverlapSensorComponent::BeginPlay()
     // default target is owner
     if (TargetObjects.Num() == 0)
     {
-        USceneComponent* ParentComp = GetAttachParent();
-        if (ParentComp)
-        {
-            TargetObjects.Add(GetAttachParent());
-        }
-        else
-        {
-            TargetObjects.Add(GetOwner());
-        }
+        TargetObjects.Add(GetOwner());
     }
 
     // Initialize Overlapping struct

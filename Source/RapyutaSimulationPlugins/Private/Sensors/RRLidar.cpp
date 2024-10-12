@@ -1,6 +1,10 @@
 // Copyright 2020-2023 Rapyuta Robotics Co., Ltd.
 
 #include "Sensors/RRLidar.h"
+#include "RapyutaSimulationPlugins.h"
+#include "logUtilities.h"
+
+
 
 void ARRLidar::PostInitializeComponents()
 {

@@ -8,6 +8,8 @@
 #include "Core/RRGameState.h"
 #include "Core/RRPlayerController.h"
 #include "Core/RRUObjectUtils.h"
+#include "RapyutaSimulationPlugins.h"
+
 
 TMap<UClass*, TUniquePtr<std::once_flag>> ARRBaseActor::OnceFlagList;
 std::once_flag ARRBaseActor::OnceFlag;

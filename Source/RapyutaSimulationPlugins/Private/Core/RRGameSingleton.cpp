@@ -5,6 +5,8 @@
 // RapyutaSim
 #include "Core/RRPakLoader.h"
 #include "Core/RRTypeUtils.h"
+#include "logUtilities.h"
+
 
 TMap<ERRResourceDataType, TArray<const TCHAR*>> URRGameSingleton::SASSET_OWNING_MODULE_NAMES = {
     // Only required for statically loaded UASSET
@@ -25,12 +27,6 @@ URRGameSingleton::URRGameSingleton()
 #if RAPYUTA_SIM_VERBOSE
     UE_LOG_WITH_INFO(LogRapyutaCore, Display, TEXT("INSTANTIATED! ======================"));
 #endif
-    // Prepare an empty [ResourceMap]
-    for (uint8 i = (static_cast<uint8>(ERRResourceDataType::NONE) + 1); i < static_cast<uint8>(ERRResourceDataType::TOTAL); ++i)
-    {
-        const ERRResourceDataType dataType = static_cast<ERRResourceDataType>(i);
-        ResourceMap.Add(dataType, FRRResourceInfo(dataType));
-    }
 }
 
 URRGameSingleton::~URRGameSingleton()
@@ -98,6 +94,13 @@ URRGameSingleton* URRGameSingleton::Get()
 
 bool URRGameSingleton::InitializeResources(bool bInRequestResourceLoading)
 {
+    // Prepare an empty [ResourceMap]
+    for (uint8 i = (static_cast<uint8>(ERRResourceDataType::NONE) + 1); i < static_cast<uint8>(ERRResourceDataType::TOTAL); ++i)
+    {
+        const ERRResourceDataType dataType = static_cast<ERRResourceDataType>(i);
+        ResourceMap.Add(dataType, FRRResourceInfo(dataType));
+    }
+
     // Initialize PakLoader (only available in packaged Sim)
 #if WITH_EDITOR
     bPakLoaderInitialized = false;

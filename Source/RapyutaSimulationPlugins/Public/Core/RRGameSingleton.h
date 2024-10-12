@@ -7,6 +7,9 @@
 
 #pragma once
 
+// Native
+#include <type_traits>
+
 // UE
 #include "CoreMinimal.h"
 #include "Engine/AssetManager.h"
@@ -16,6 +19,7 @@
 #include "Materials/Material.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "PhysicsEngine/BodySetup.h"
+#include "PhysicsEngine/PhysicsAsset.h"
 #include "Templates/UniquePtr.h"
 
 // RapyutaSimulationPlugins
@@ -31,32 +35,26 @@
 class URRPakLoader;
 
 template<const ERRResourceDataType InDataType>
-using URRAssetObject = typename TChooseClass<
+using URRAssetObject = typename std::conditional<
     (ERRResourceDataType::UE_STATIC_MESH == InDataType),
     UStaticMesh,
-    typename TChooseClass<
-        (ERRResourceDataType::UE_SKELETAL_MESH == InDataType),
+    typename std::conditional<(ERRResourceDataType::UE_SKELETAL_MESH == InDataType),
         USkeletalMesh,
-        typename TChooseClass<
-            (ERRResourceDataType::UE_SKELETON == InDataType),
+        typename std::conditional<(ERRResourceDataType::UE_SKELETON == InDataType),
             USkeleton,
-            typename TChooseClass<
-                (ERRResourceDataType::UE_PHYSICS_ASSET == InDataType),
+            typename std::conditional<(ERRResourceDataType::UE_PHYSICS_ASSET == InDataType),
                 UPhysicsAsset,
-                typename TChooseClass<
-                    (ERRResourceDataType::UE_MATERIAL == InDataType),
+                typename std::conditional<(ERRResourceDataType::UE_MATERIAL == InDataType),
                     UMaterialInterface,
-                    typename TChooseClass<
-                        (ERRResourceDataType::UE_PHYSICAL_MATERIAL == InDataType),
+                    typename std::conditional<(ERRResourceDataType::UE_PHYSICAL_MATERIAL == InDataType),
                         UPhysicalMaterial,
-                        typename TChooseClass<
-                            (ERRResourceDataType::UE_TEXTURE == InDataType),
+                        typename std::conditional<(ERRResourceDataType::UE_TEXTURE == InDataType),
                             UTexture,
-                            typename TChooseClass<
-                                (ERRResourceDataType::UE_DATA_TABLE == InDataType),
+                            typename std::conditional<(ERRResourceDataType::UE_DATA_TABLE == InDataType),
                                 UDataTable,
-                                typename TChooseClass<(ERRResourceDataType::UE_BODY_SETUP == InDataType), UBodySetup, UObject>::
-                                    Result>::Result>::Result>::Result>::Result>::Result>::Result>::Result>::Result;
+                                typename std::conditional<(ERRResourceDataType::UE_BODY_SETUP == InDataType),
+                                    UBodySetup,
+                                    UObject>::type>::type>::type>::type>::type>::type>::type>::type>::type;
 
 /**
  * @brief GameSingleton class which handles asset loading.
@@ -127,9 +125,6 @@ public:
     static constexpr const TCHAR* ASSETS_ROOT_PATH = TEXT("/");
     static constexpr const TCHAR* ASSETS_PROJECT_BASE_MODULE_NAME = TEXT("Game");
     static constexpr const TCHAR* ASSETS_PROJECT_MODULE_NAME = TEXT("Game/RapyutaContents");
-
-    UPROPERTY(config)
-    FIntPoint ASSETS_THUMBNAIL_SIZE = {512, 512};
 
     //! Base path whereby runtime-created blueprint classes are saved, ideally in Project, so it could reference all plugins' assets.
     UPROPERTY(Config)
@@ -396,7 +391,7 @@ public:
                          resourceInfo.ToBeAsyncLoadedResourceNum);
 #endif
 
-        UAssetManager* assetManager = UAssetManager::GetIfValid();
+        UAssetManager* assetManager = UAssetManager::GetIfInitialized();
         if (assetManager)
         {
             for (const auto& resourceMetaData : resourceInfo.Data)

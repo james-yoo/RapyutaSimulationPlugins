@@ -14,6 +14,8 @@
 #include "Core/RRGameState.h"
 #include "Core/RRPlayerController.h"
 #include "Tools/RRROS2ClockPublisher.h"
+#include "logUtilities.h"
+
 
 ARRGameMode::ARRGameMode()
 {

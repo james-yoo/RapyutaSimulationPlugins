@@ -1,8 +1,19 @@
 // Copyright 2020-2023 Rapyuta Robotics Co., Ltd.
 #include "Core/RRAssetUtils.h"
 
+// Native
+#include <type_traits>
+
 // UE
 #include "CoreMinimal.h"
+
+
+
+// Ensure RAPYUTA_SIM_DEBUG is defined before usage
+#ifndef RAPYUTA_SIM_DEBUG
+#define RAPYUTA_SIM_DEBUG 0  // Default to 0 if undefined
+#endif
+
 
 #if WITH_EDITOR
 #include "BlueprintCompilationManager.h"
@@ -18,7 +29,7 @@
 #include "Core/RRGameSingleton.h"
 #include "Core/RRThreadUtils.h"
 
-using URRBlueprint = typename TChooseClass<WITH_EDITOR, UBlueprint, UBlueprintGeneratedClass>::Result;
+using URRBlueprint = typename std::conditional<WITH_EDITOR, UBlueprint, UBlueprintGeneratedClass>::type;
 
 UClass* URRAssetUtils::FindBlueprintClass(const FString& InBlueprintClassName)
 {
@@ -58,11 +69,11 @@ UClass* URRAssetUtils::FindBlueprintClass(const FString& InBlueprintClassName)
             {
                 if (auto* bp = Cast<URRBlueprint>(InAssetData.GetAsset()))
                 {
-                    if constexpr (TIsSame<URRBlueprint, UBlueprint>::Value)
+                    if constexpr (std::is_same<URRBlueprint, UBlueprint>::value)
                     {
                         foundBPClass = Cast<UBlueprint>(bp)->GeneratedClass;
                     }
-                    else if constexpr (TIsSame<URRBlueprint, UBlueprintGeneratedClass>::Value)
+                    else if constexpr (std::is_same<URRBlueprint, UBlueprintGeneratedClass>::value)
                     {
                         foundBPClass = Cast<UClass>(bp);
                     }

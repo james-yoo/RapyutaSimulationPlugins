@@ -10,9 +10,16 @@
 // UE
 #include "AIController.h"
 #include "CoreMinimal.h"
+#include "Navigation/PathFollowingComponent.h"
+
+// RapyutaSimulationPlugins
 #include "Robots/RRBaseRobotROSController.h"
 
+#include "ROS2Publisher.h"
+
+
 #include "RRAIRobotROSController.generated.h"
+
 
 class URRRobotROS2Interface;
 

@@ -51,6 +51,21 @@ public:
 
     virtual void PreInitializePublisher(UROS2NodeComponent* InROS2Node, const FString& InTopicName) override;
 
+    /**
+     * @brief Update ROS 2 Msg structure from #RenderRequestQueue
+     *
+     * @return FROSOdom
+     */
+    UFUNCTION(BlueprintCallable)
+    virtual FROSOdom GetROS2Data();
+
+    /**
+     * @brief Set result of #GetROS2Data to InMessage.
+     *
+     * @param InMessage
+     */
+    virtual void SetROS2Msg(UROS2GenericMsg* InMessage) override;
+
     UPROPERTY(BlueprintReadWrite)
     TWeakObjectPtr<ARRBaseRobot> RobotVehicle = nullptr;
 
@@ -84,7 +99,7 @@ public:
     UFUNCTION(BlueprintCallable)
     virtual void InitOdom();
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere)
     EOdomSource OdomSource = EOdomSource::WORLD;
 
     /**
@@ -96,7 +111,7 @@ public:
 
     //! Publish tf or not
     //! @todo move this to publisher
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(BlueprintReadWrite)
     bool bPublishOdomTf = false;
 
     UPROPERTY(VisibleAnywhere)

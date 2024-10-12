@@ -4,6 +4,8 @@
 // RapyutaSimulationPlugins
 #include "Robots/RRBaseRobot.h"
 #include "Robots/RRRobotROS2Interface.h"
+#include "RapyutaSimulationPlugins.h"
+
 
 void ARRCrowdROSController::OnPossess(APawn* InPawn)
 {

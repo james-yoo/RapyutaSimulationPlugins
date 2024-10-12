@@ -7,6 +7,8 @@
 #include "Core/RRGameMode.h"
 #include "Core/RRGameSingleton.h"
 #include "Core/RRMathUtils.h"
+#include "logUtilities.h"
+
 
 FString URRGameInstance::SMapName;
 void URRGameInstance::PreloadContentForURL(FURL InURL)

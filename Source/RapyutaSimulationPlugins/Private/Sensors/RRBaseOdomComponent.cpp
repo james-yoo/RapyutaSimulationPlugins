@@ -4,10 +4,11 @@
 
 URRBaseOdomComponent::URRBaseOdomComponent()
 {
-    SensorPublisherClass = URRROS2OdomPublisher::StaticClass();
+    MsgClass = UROS2OdomMsg::StaticClass();
     TopicName = TEXT("odom");
     PublicationFrequencyHz = 30;
     FrameId = TEXT("odom");    //default frame id
+    SensorPublisherClass = URRROS2OdomPublisher::StaticClass();
 }
 
 void URRBaseOdomComponent::SensorUpdate()
@@ -23,11 +24,10 @@ void URRBaseOdomComponent::SensorUpdate()
 void URRBaseOdomComponent::PreInitializePublisher(UROS2NodeComponent* InROS2Node, const FString& InTopicName)
 {
     Super::PreInitializePublisher(InROS2Node, InTopicName);
-
-    URRROS2OdomPublisher* odomPub = Cast<URRROS2OdomPublisher>(SensorPublisher);
-    if (odomPub)
+    auto odompublisher = Cast<URRROS2OdomPublisher>(SensorPublisher);
+    if (odompublisher)
     {
-        odomPub->bPublishOdomTf = bPublishOdomTf;
+        odompublisher->bPublishOdomTf = bPublishOdomTf;
     }
 }
 
@@ -140,4 +140,14 @@ void URRBaseOdomComponent::UpdateOdom(float InDeltaTime)
 FTransform URRBaseOdomComponent::GetOdomTF() const
 {
     return FTransform(OdomData.Pose.Pose.Orientation, OdomData.Pose.Pose.Position);
+}
+
+FROSOdom URRBaseOdomComponent::GetROS2Data()
+{
+    return URRConversionUtils::OdomUEToROS(OdomData);
+}
+
+void URRBaseOdomComponent::SetROS2Msg(UROS2GenericMsg* InMessage)
+{
+    CastChecked<UROS2OdomMsg>(InMessage)->SetMsg(GetROS2Data());
 }

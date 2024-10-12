@@ -1,3 +1,6 @@
+
+#pragma once
+
 /**
  * @file RRRobotVehicleROSController.h
  * @brief Base Robot ROS controller class. Other robot controller class should inherit from this class. Example is
@@ -5,7 +8,6 @@
  * @copyright Copyright 2020-2022 Rapyuta Robotics Co., Ltd.
  */
 
-#pragma once
 
 // UE
 #include "AIController.h"

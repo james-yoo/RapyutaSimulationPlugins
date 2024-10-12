@@ -2,8 +2,12 @@
 
 #include "Drives/RRFloatingMovementComponent.h"
 
+
+
 // RapyutaSimulationPlugins
 #include "Core/RRMathUtils.h"
+
+#include "Core/RRActorCommon.h"
 
 URRFloatingMovementComponent::URRFloatingMovementComponent(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer), bSweepEnabled(true), b2DMovement(false), bUseDecelerationForPaths(true)

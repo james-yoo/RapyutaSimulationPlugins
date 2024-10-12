@@ -15,6 +15,8 @@
 #include "Core/RRSceneDirector.h"
 #include "Core/RRThreadUtils.h"
 #include "Core/RRUObjectUtils.h"
+#include "RapyutaSimulationPlugins.h"
+
 
 void URRSceneInstance::ConfigureStaticClasses()
 {
