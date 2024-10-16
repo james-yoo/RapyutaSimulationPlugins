@@ -208,7 +208,7 @@ bool ASimulationState::ServerCheckSetEntityStateRequest(const FROSSetEntityState
         PrevSetEntityStateRequest.State.Pose.Position == InRequest.State.Pose.Position &&
         PrevSetEntityStateRequest.State.Pose.Orientation == InRequest.State.Pose.Orientation)
     {
-        return false;
+        return true;
     }
     else
     {
