@@ -24,7 +24,8 @@ public:
 
     UPROPERTY()
     TObjectPtr<URRFloatingMovementComponent> FloatMovementComp = nullptr;
-    virtual void SetMovementComponent(UNavMovementComponent* InMoveComp) override;
+    virtual void SetNavMovementInterface(INavMovementInterface* InMoveInterface) override;
+
     bool Is2DMovement() const;
 
     bool IsIdle() const

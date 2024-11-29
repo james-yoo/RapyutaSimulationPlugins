@@ -74,7 +74,7 @@ void URRFloatingMovementComponent::TickComponent(float InDeltaTime,
     }
 
     // Apply input for local players but also for AI that's not following a navigation path at the moment
-    if (controller->IsLocalPlayerController() || (false == controller->IsFollowingAPath()) || bUseAccelerationForPaths)
+    if (controller->IsLocalPlayerController() || (false == controller->IsFollowingAPath()) || NavMovementProperties.bUseAccelerationForPaths)
     {
         // NOTE: This is only applied to linear [Velocity] from [APawn::ControlInputVector], which is for linear movement.
         ApplyControlInputToVelocity(InDeltaTime);

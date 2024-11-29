@@ -16,10 +16,10 @@ bool URRCrowdFollowingComponent::Is2DMovement() const
     return FloatMovementComp && FloatMovementComp->Is2DMovement();
 }
 
-void URRCrowdFollowingComponent::SetMovementComponent(UNavMovementComponent* InMoveComp)
+void URRCrowdFollowingComponent::SetNavMovementInterface(INavMovementInterface* InMoveInterface)
 {
-    Super::SetMovementComponent(InMoveComp);
-    FloatMovementComp = Cast<URRFloatingMovementComponent>(InMoveComp);
+    Super::SetNavMovementInterface(InMoveInterface);
+    FloatMovementComp = Cast<URRFloatingMovementComponent>(InMoveInterface);
     if (FloatMovementComp)
     {
         bEnableSlowdownAtGoal = FloatMovementComp->UseDecelerationForPathFollowing();
