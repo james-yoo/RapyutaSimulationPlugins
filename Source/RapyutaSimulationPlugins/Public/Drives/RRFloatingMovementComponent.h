@@ -60,7 +60,7 @@ public:
 
     void SetUseAccelerationForPaths(bool bEnabled)
     {
-        bUseAccelerationForPaths = bEnabled;
+        NavMovementProperties.bUseAccelerationForPaths = bEnabled;
     }
 
     void SetPenetrationPullbackDistance(float PullbackDistance)
